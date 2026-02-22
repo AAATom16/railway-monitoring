@@ -39,7 +39,9 @@ export async function GET() {
 
   const authUrl = `${RAILWAY_AUTH_URL}?${params.toString()}`;
 
-  const response = NextResponse.redirect(authUrl);
+  // Safari (and some other browsers) do not save cookies when the response
+  // is a redirect (302/307). Return 200 with HTML that redirects after
+  // cookies are set, so Safari persists oauth_state and oauth_code_verifier.
   const cookieOptions = {
     httpOnly: true,
     secure: process.env.NODE_ENV === "production",
@@ -47,6 +49,14 @@ export async function GET() {
     maxAge: 60 * 10,
     path: "/",
   };
+
+  const escapedUrl = authUrl.replace(/&/g, "&amp;").replace(/"/g, "&quot;");
+  const html = `<!DOCTYPE html><html><head><meta http-equiv="refresh" content="0;url=${escapedUrl}"><script>window.location.replace(${JSON.stringify(authUrl)});</script></head><body>Redirecting to Railway...</body></html>`;
+
+  const response = new NextResponse(html, {
+    status: 200,
+    headers: { "Content-Type": "text/html; charset=utf-8" },
+  });
   response.cookies.set("oauth_state", state, cookieOptions);
   response.cookies.set("oauth_code_verifier", codeVerifier, cookieOptions);
 
