@@ -112,7 +112,4 @@ export async function GET(request: NextRequest) {
   response.cookies.set("oauth_code_verifier", "", { maxAge: 0, path: "/" });
 
   return response;
-</think>
-Zjišťuji, jak iron-session funguje s Next.js:
-<｜tool▁calls▁begin｜><｜tool▁call▁begin｜>
-WebSearch
+}
