@@ -46,7 +46,10 @@ export function StatusBadge({ health }: { health: Health }) {
   const Icon = config.Icon;
 
   return (
-    <Badge variant={config.variant} className="gap-1.5">
+    <Badge
+      variant={config.variant}
+      className={`gap-1.5 ${health === "DEPLOYING" ? "animate-pulse" : ""}`}
+    >
       {health === "DEPLOYING" && (
         <Icon className="h-3.5 w-3.5 animate-spin" />
       )}

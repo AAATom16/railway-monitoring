@@ -3,6 +3,7 @@
 import { useState, useMemo, Fragment } from "react";
 import { useOverview } from "@/hooks/use-overview";
 import { usePinnedProjects } from "@/hooks/use-pinned-projects";
+import { useFailureNotifications } from "@/hooks/use-failure-notifications";
 import { StatusBadge } from "@/components/status-badge";
 import {
   Table,
@@ -24,6 +25,7 @@ import {
   ChevronDown,
   ChevronRight,
   RefreshCw,
+  RotateCw,
   Star,
   LayoutGrid,
   List,
@@ -77,11 +79,33 @@ export function ServiceTable() {
     () => new Set()
   );
   const [logsService, setLogsService] = useState<ServiceRowType | null>(null);
+  const [redeployingKey, setRedeployingKey] = useState<string | null>(null);
 
   const { pinned, togglePin, isPinned } = usePinnedProjects();
   const { data, isLoading, error, refetch, isFetching } = useOverview({
     refetchInterval: autoRefresh ? refreshInterval * 1000 : false,
   });
+  useFailureNotifications(data);
+
+  const handleRedeploy = async (row: ServiceRowType) => {
+    const key = `${row.serviceId}-${row.environmentId}`;
+    setRedeployingKey(key);
+    try {
+      const res = await fetch("/api/redeploy", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          serviceId: row.serviceId,
+          environmentId: row.environmentId,
+        }),
+      });
+      if (res.ok) {
+        refetch();
+      }
+    } finally {
+      setRedeployingKey(null);
+    }
+  };
 
   const filtered = useMemo(() => {
     if (!data) return [];
@@ -329,6 +353,25 @@ export function ServiceTable() {
                               <Button
                                 variant="ghost"
                                 size="icon"
+                                title="Redeploy"
+                                onClick={() => handleRedeploy(row)}
+                                disabled={
+                                  redeployingKey ===
+                                  `${row.serviceId}-${row.environmentId}`
+                                }
+                              >
+                                <RotateCw
+                                  className={`h-4 w-4 ${
+                                    redeployingKey ===
+                                    `${row.serviceId}-${row.environmentId}`
+                                      ? "animate-spin"
+                                      : ""
+                                  }`}
+                                />
+                              </Button>
+                              <Button
+                                variant="ghost"
+                                size="icon"
                                 title="View logs"
                                 onClick={() => setLogsService(row)}
                               >
@@ -405,6 +448,26 @@ export function ServiceTable() {
                       </div>
                       <div className="flex items-center gap-2 shrink-0">
                         <StatusBadge health={row.health} />
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          className="h-8 w-8"
+                          title="Redeploy"
+                          onClick={() => handleRedeploy(row)}
+                          disabled={
+                            redeployingKey ===
+                            `${row.serviceId}-${row.environmentId}`
+                          }
+                        >
+                          <RotateCw
+                            className={`h-4 w-4 ${
+                              redeployingKey ===
+                              `${row.serviceId}-${row.environmentId}`
+                                ? "animate-spin"
+                                : ""
+                            }`}
+                          />
+                        </Button>
                         <Button
                           variant="ghost"
                           size="icon"

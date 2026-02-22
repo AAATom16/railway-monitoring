@@ -12,6 +12,9 @@ Dashboard to monitor all your Railway services across projects. One screen, all 
 - **Status at a glance** — Running, deploying, failed (with filters: All, Failing, Deploying, Healthy)
 - **Search & filters** — Filter by project/service name, production only
 - **Logs on demand** — Click a service, see logs in a side panel (static or live SSE stream)
+- **Redeploy** — One-click redeploy for any service
+- **Browser notifications** — Get notified when a build fails (optional, enable in header)
+- **PWA** — Install as an app on your device
 - **Railway login** — Sign in with your Railway account, no extra credentials
 - **Auto-refresh** — Configurable refresh interval (15s, 30s, 60s)
 
