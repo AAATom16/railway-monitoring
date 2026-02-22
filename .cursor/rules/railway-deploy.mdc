@@ -1,0 +1,13 @@
+---
+description: Railway deploy and CLI
+globs: ["railway.json", "Dockerfile", "*.md"]
+alwaysApply: false
+---
+
+# Railway Deploy
+
+- Build: `pnpm build`
+- Start: `pnpm start` (or `node server.js` for standalone)
+- Env vars in Railway dashboard, never in code
+- Deploy from CLI: `railway up` (for quick testing)
+- Production deploy via GitHub webhook (push to main)
