@@ -1,4 +1,3 @@
-import Link from "next/link";
 import { Button } from "@/components/ui/button";
 
 export default async function LoginPage({
@@ -20,7 +19,7 @@ export default async function LoginPage({
           </p>
         )}
         <Button asChild>
-          <Link href="/api/auth/login">Sign in with Railway</Link>
+          <a href="/api/auth/login">Sign in with Railway</a>
         </Button>
       </div>
     </div>
