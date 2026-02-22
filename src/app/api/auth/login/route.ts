@@ -55,7 +55,10 @@ export async function GET() {
 
   const response = new NextResponse(html, {
     status: 200,
-    headers: { "Content-Type": "text/html; charset=utf-8" },
+    headers: {
+      "Content-Type": "text/html; charset=utf-8",
+      "Cache-Control": "no-store, no-cache, must-revalidate, max-age=0",
+    },
   });
   response.cookies.set("oauth_state", state, cookieOptions);
   response.cookies.set("oauth_code_verifier", codeVerifier, cookieOptions);

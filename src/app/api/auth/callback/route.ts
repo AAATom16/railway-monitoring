@@ -95,9 +95,24 @@ export async function GET(request: NextRequest) {
   session.expiresAt = expiresAt;
   await session.save();
 
-  const response = NextResponse.redirect(new URL("/", baseUrl));
+  // Safari does not save cookies on redirect responses. Return 200 with
+  // HTML that redirects after a short delay so the session cookie persists.
+  const homeUrl = new URL("/", baseUrl).toString();
+  const html = `<!DOCTYPE html><html><head><meta http-equiv="refresh" content="0;url=${homeUrl}"><script>window.location.replace(${JSON.stringify(homeUrl)});</script></head><body>Signing you in...</body></html>`;
+
+  const response = new NextResponse(html, {
+    status: 200,
+    headers: {
+      "Content-Type": "text/html; charset=utf-8",
+      "Cache-Control": "no-store, no-cache, must-revalidate, max-age=0",
+    },
+  });
+  // Clear OAuth flow cookies
   response.cookies.set("oauth_state", "", { maxAge: 0, path: "/" });
   response.cookies.set("oauth_code_verifier", "", { maxAge: 0, path: "/" });
 
   return response;
-}
+</think>
+Zjišťuji, jak iron-session funguje s Next.js:
+<｜tool▁calls▁begin｜><｜tool▁call▁begin｜>
+WebSearch

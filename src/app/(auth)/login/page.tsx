@@ -28,6 +28,12 @@ export default async function LoginPage({
         <Button asChild>
           <a href="/api/auth/login">Sign in with Railway</a>
         </Button>
+        <p className="text-muted-foreground text-sm mt-4">
+          Problémy s přihlášením?{" "}
+          <a href="/api/auth/logout" className="underline hover:text-foreground">
+            Zkus odhlásit se a přihlásit znovu
+          </a>
+        </p>
       </div>
     </div>
   );
