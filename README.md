@@ -41,7 +41,7 @@ Open [http://localhost:3000](http://localhost:3000) and log in with your Railway
 
 ### Railway (recommended)
 
-See [docs/DEPLOY_RAILWAY.md](docs/DEPLOY_RAILWAY.md) for details. Quick steps:
+See [docs/DEPLOY_RAILWAY.md](docs/DEPLOY_RAILWAY.md) for details. Pro propojení s GitHubem viz [docs/GITHUB_RAILWAY_SETUP.md](docs/GITHUB_RAILWAY_SETUP.md). Quick steps:
 
 1. Create a new project on Railway and connect your GitHub repo
 2. Add env vars: `RAILWAY_CLIENT_ID`, `RAILWAY_CLIENT_SECRET`, `SESSION_SECRET`, `NEXTAUTH_URL`

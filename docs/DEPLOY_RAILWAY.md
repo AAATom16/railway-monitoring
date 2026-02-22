@@ -1,12 +1,14 @@
 # Deploying to Railway
 
-## Connect GitHub
+## Connect GitHub (pro automatický deploy)
+
+**Důležité:** Railway GitHub App musí mít přístup k tomuto repozitáři. Viz [docs/GITHUB_RAILWAY_SETUP.md](GITHUB_RAILWAY_SETUP.md).
 
 1. Log in to [Railway](https://railway.app)
-2. Click **New Project**
+2. Otevřete projekt nebo klikněte **New Project**
 3. Select **Deploy from GitHub repo**
-4. Choose this repository
-5. Railway will detect the Next.js app and use Nixpacks
+4. Choose repository `AAATom16/railway-monitoring`
+5. Railway detekuje Next.js a použije Nixpacks
 
 ## Environment Variables
 
