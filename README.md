@@ -1,70 +1,86 @@
-# Railway Monitoring Dashboard
+# Railway Monitoring
 
-A clean, modern dashboard to monitor all your Railway services across projects at a glance. One-click access to logs, status, and deployments.
+Dashboard to monitor all your Railway services across projects. One screen, all statuses, one click to logs.
 
-## Features
+![Railway Monitoring](https://img.shields.io/badge/Railway-0B0D0E?style=flat&logo=railway&logoColor=white)
 
-- **Global Service Health** — See status of all services across all projects on one screen
-- **Quick Logs** — One-click access to service logs in a slide-out drawer
-- **Live Logs** — Real-time log streaming (SSE) for tail -f style monitoring
-- **Filters** — Filter by status (All / Failing / Deploying / Healthy), search by project/service
-- **Auto-refresh** — Configurable polling (15s / 30s / 60s)
-- **Railway OAuth** — Secure login with your Railway account
+## What you get
 
-## Quick Start
+- **Single overview** — All projects, all services, all environments in one table
+- **Status at a glance** — Running, deploying, failed (with filters)
+- **Logs on demand** — Click a service, see logs in a side panel (static or live stream)
+- **Railway login** — Sign in with your Railway account, no extra credentials
 
-### 1. Clone and install
+## Quick Start (local)
 
 ```bash
-git clone https://github.com/YOUR_USERNAME/railway-monitoring.git
+git clone https://github.com/AAATom16/railway-monitoring.git
 cd railway-monitoring
 npm install
-```
-
-### 2. Configure environment
-
-Copy `.env.example` to `.env` and fill in the values. See [docs/SETUP_RAILWAY_OAUTH.md](docs/SETUP_RAILWAY_OAUTH.md) for creating a Railway OAuth app.
-
-```bash
 cp .env.example .env
 ```
 
-### 3. Run
+Fill in `.env` (see [Setup](#setup) below). Then:
 
 ```bash
 npm run dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) and log in with your Railway account.
+Open [http://localhost:3000](http://localhost:3000) and log in with Railway.
 
-## Deployment
+## Setup
 
-### Railway (recommended)
+You need a Railway OAuth app to let users sign in.
 
-See [docs/DEPLOY_RAILWAY.md](docs/DEPLOY_RAILWAY.md) for details. Pro propojení s GitHubem viz [docs/GITHUB_RAILWAY_SETUP.md](docs/GITHUB_RAILWAY_SETUP.md). Quick steps:
+1. Go to [railway.app/account](https://railway.app/account) → **Developer** → **OAuth Apps**
+2. Create a new app (type: Web Application)
+3. Add redirect URI:  
+   - Local: `http://localhost:3000/api/auth/callback`  
+   - Production: `https://your-domain.com/api/auth/callback`
+4. Copy Client ID and Client Secret
+5. In `.env`:
 
-1. Create a new project on Railway and connect your GitHub repo
-2. Add env vars: `RAILWAY_CLIENT_ID`, `RAILWAY_CLIENT_SECRET`, `SESSION_SECRET`, `NEXTAUTH_URL`
-3. Deploy — Railway auto-deploys on push to `main`
+```env
+RAILWAY_CLIENT_ID=rlwy_oaci_xxxxx
+RAILWAY_CLIENT_SECRET=rlwy_oacs_xxxxx
+SESSION_SECRET=         # generate: openssl rand -base64 32
+NEXTAUTH_URL=http://localhost:3000
+```
 
-### Docker
+See [docs/SETUP_RAILWAY_OAUTH.md](docs/SETUP_RAILWAY_OAUTH.md) for a detailed walkthrough.
+
+## Deploy (Railway)
+
+1. Create a project on [Railway](https://railway.app) and connect this repo
+2. Add service from GitHub, select this repository
+3. Add variables in Railway:
+   - `RAILWAY_CLIENT_ID`
+   - `RAILWAY_CLIENT_SECRET`
+   - `SESSION_SECRET` (e.g. `openssl rand -base64 32`)
+   - `NEXTAUTH_URL` = your app URL (e.g. `https://xxx.up.railway.app`)
+4. In your OAuth app, add redirect URI: `https://your-railway-url/api/auth/callback`
+5. Deploy — Railway deploys on push to `main`
+
+Or use Docker:
 
 ```bash
 docker build -t railway-monitoring .
 docker run -p 3000:3000 --env-file .env railway-monitoring
 ```
 
-## Tech Stack
+## Tech
 
-- Next.js 15 (App Router)
-- TypeScript
-- Tailwind CSS + shadcn/ui
-- TanStack Query
+- Next.js 15 (App Router), TypeScript, Tailwind, shadcn/ui
 - Railway OAuth + GraphQL API
+- TanStack Query for data, SSE for live logs
 
-## Contributing
+## Docs
 
-See [CONTRIBUTING.md](CONTRIBUTING.md) for how to contribute.
+- [OAuth setup](docs/SETUP_RAILWAY_OAUTH.md)
+- [Deploy on Railway](docs/DEPLOY_RAILWAY.md)
+- [GitHub + Railway](docs/GITHUB_RAILWAY_SETUP.md)
+- [Security](SECURITY.md)
+- [Contributing](CONTRIBUTING.md)
 
 ## License
 

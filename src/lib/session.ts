@@ -7,8 +7,20 @@ export interface SessionData {
   expiresAt?: number;
 }
 
+function getSessionSecret(): string {
+  const secret = process.env.SESSION_SECRET;
+  if (!secret && process.env.NODE_ENV === "production") {
+    throw new Error(
+      "SESSION_SECRET must be set in production. Generate with: openssl rand -base64 32"
+    );
+  }
+  return secret || "min-32-char-secret-for-dev-only!!!!!!!!";
+}
+
 const sessionOptions = {
-  password: process.env.SESSION_SECRET || "min-32-char-secret-for-dev-only!!!!!!!!",
+  get password() {
+    return getSessionSecret();
+  },
   cookieName: "railway-monitoring-session",
   cookieOptions: {
     secure: process.env.NODE_ENV === "production",
