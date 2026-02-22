@@ -14,9 +14,15 @@ export default async function LoginPage({
           Sign in with your Railway account to view all your services
         </p>
         {params.error && (
-          <div className="text-destructive text-sm mb-4 space-y-1">
+          <div className="text-destructive text-sm mb-4 space-y-2">
             <p>Login failed: <code className="bg-muted px-1 rounded">{params.error}</code></p>
-            <p className="text-muted-foreground text-xs">Check server logs for [OAuth] debug output.</p>
+            {params.error === "invalid_client" && (
+              <p className="text-muted-foreground text-xs max-w-md">
+                Railway nepozná client_id. OAuth app musí být v <strong>Workspace → Settings → Developer → New OAuth App</strong> (ne v Account/Tokens).{" "}
+                <a href="/api/auth/diagnose" className="underline" target="_blank" rel="noopener">Diagnostika</a>
+              </p>
+            )}
+            <p className="text-muted-foreground text-xs">Server logs: <code>[OAuth]</code></p>
           </div>
         )}
         <Button asChild>
