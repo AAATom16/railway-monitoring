@@ -11,6 +11,14 @@ export const OVERVIEW_QUERY = `
               node {
                 id
                 name
+                environments {
+                  edges {
+                    node {
+                      id
+                      name
+                    }
+                  }
+                }
                 services {
                   edges {
                     node {
@@ -20,10 +28,7 @@ export const OVERVIEW_QUERY = `
                         edges {
                           node {
                             id
-                            environment {
-                              id
-                              name
-                            }
+                            environmentId
                             latestDeployment {
                               id
                               status

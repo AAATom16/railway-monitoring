@@ -15,10 +15,9 @@ export async function GET() {
     const rows = transformOverviewToServiceRows(data);
     return NextResponse.json(rows);
   } catch (err) {
-    console.error("Overview API error:", err);
-    return NextResponse.json(
-      { error: err instanceof Error ? err.message : "Failed to fetch overview" },
-      { status: 401 }
-    );
+    console.error("[Overview API] Error:", err);
+    const message = err instanceof Error ? err.message : "Failed to fetch overview";
+    const status = message === "Not authenticated" ? 401 : 500;
+    return NextResponse.json({ error: message }, { status });
   }
 }

@@ -11,6 +11,11 @@ interface WorkspaceNode {
         node: {
           id: string;
           name: string;
+          environments?: {
+            edges?: Array<{
+              node: { id: string; name: string };
+            }>;
+          };
           services?: {
             edges?: Array<{
               node: {
@@ -20,10 +25,7 @@ interface WorkspaceNode {
                   edges?: Array<{
                     node: {
                       id: string;
-                      environment?: {
-                        id: string;
-                        name: string;
-                      };
+                      environmentId: string;
                       latestDeployment?: {
                         id: string;
                         status?: string;
@@ -48,6 +50,16 @@ export interface OverviewResponse {
   };
 }
 
+function buildEnvMap(
+  envEdges: Array<{ node: { id: string; name: string } }> | undefined
+): Map<string, string> {
+  const map = new Map<string, string>();
+  for (const edge of envEdges ?? []) {
+    map.set(edge.node.id, edge.node.name);
+  }
+  return map;
+}
+
 export function transformOverviewToServiceRows(data: OverviewResponse): ServiceRow[] {
   const rows: ServiceRow[] = [];
   const workspaces = data.me?.workspaces ?? [];
@@ -58,6 +70,7 @@ export function transformOverviewToServiceRows(data: OverviewResponse): ServiceR
       const project = projectEdge.node;
       const projectId = project.id;
       const projectName = project.name;
+      const envMap = buildEnvMap(project.environments?.edges);
 
       const services = project.services?.edges ?? [];
       for (const serviceEdge of services) {
@@ -68,10 +81,9 @@ export function transformOverviewToServiceRows(data: OverviewResponse): ServiceR
         const instances = service.serviceInstances?.edges ?? [];
         for (const instanceEdge of instances) {
           const instance = instanceEdge.node;
-          const env = instance.environment;
+          const envId = instance.environmentId;
+          const envName = envMap.get(envId) ?? "unknown";
           const deployment = instance.latestDeployment;
-
-          if (!env) continue;
 
           const health = deploymentStatusToHealth(deployment?.status);
           const lastDeployStatus = deployment?.status as ServiceRow["lastDeployStatus"];
@@ -82,12 +94,12 @@ export function transformOverviewToServiceRows(data: OverviewResponse): ServiceR
             projectName,
             serviceId,
             serviceName,
-            environmentId: env.id,
-            environmentName: env.name,
+            environmentId: envId,
+            environmentName: envName,
             health,
             lastDeployStatus,
             lastDeployAt,
-            railwayUrl: `https://railway.app/project/${projectId}?environmentId=${env.id}`,
+            railwayUrl: `https://railway.app/project/${projectId}?environmentId=${envId}`,
           });
         }
 
