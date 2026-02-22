@@ -7,6 +7,8 @@ Dashboard to monitor all your Railway services across projects. One screen, all 
 
 > **Live demo:** [railway-monitoring-production.up.railway.app](https://railway-monitoring-production.up.railway.app) — Sign in with your Railway account to see the dashboard.
 
+![Railway Monitoring Dashboard](docs/screenshot.png)
+
 ## Features
 
 - **Single overview** — All projects, all services, all environments in one place
