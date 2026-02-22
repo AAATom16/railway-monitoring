@@ -4,43 +4,40 @@ import { deploymentStatusToHealth } from "@/lib/health";
 interface WorkspaceNode {
   id: string;
   name: string;
-  team?: {
-    id: string;
-    projects?: {
-      edges?: Array<{
-        node: {
-          id: string;
-          name: string;
-          environments?: {
-            edges?: Array<{
-              node: { id: string; name: string };
-            }>;
-          };
-          services?: {
-            edges?: Array<{
-              node: {
-                id: string;
-                name: string;
-                serviceInstances?: {
-                  edges?: Array<{
-                    node: {
-                      id: string;
-                      environmentId: string;
-                      latestDeployment?: {
-                        id: string;
-                        status?: string;
-                        createdAt?: string;
-                        meta?: Record<string, unknown>;
-                      } | null;
-                    };
-                  }>;
-                };
-              };
-            }>;
-          };
+  projects?: {
+    edges?: Array<{
+      node: {
+        id: string;
+        name: string;
+        environments?: {
+          edges?: Array<{
+            node: { id: string; name: string };
+          }>;
         };
-      }>;
-    };
+        services?: {
+          edges?: Array<{
+            node: {
+              id: string;
+              name: string;
+              serviceInstances?: {
+                edges?: Array<{
+                  node: {
+                    id: string;
+                    environmentId: string;
+                    latestDeployment?: {
+                      id: string;
+                      status?: string;
+                      createdAt?: string;
+                      meta?: Record<string, unknown>;
+                    } | null;
+                  };
+                }>;
+              };
+            };
+          }>;
+        };
+      };
+    }>;
   };
 }
 
@@ -65,7 +62,7 @@ export function transformOverviewToServiceRows(data: OverviewResponse): ServiceR
   const workspaces = data.me?.workspaces ?? [];
 
   for (const workspace of workspaces) {
-    const projects = workspace.team?.projects?.edges ?? [];
+    const projects = workspace.projects?.edges ?? [];
     for (const projectEdge of projects) {
       const project = projectEdge.node;
       const projectId = project.id;

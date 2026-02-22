@@ -4,37 +4,34 @@ export const OVERVIEW_QUERY = `
       workspaces {
         id
         name
-        team {
-          id
-          projects {
-            edges {
-              node {
-                id
-                name
-                environments {
-                  edges {
-                    node {
-                      id
-                      name
-                    }
+        projects {
+          edges {
+            node {
+              id
+              name
+              environments {
+                edges {
+                  node {
+                    id
+                    name
                   }
                 }
-                services {
-                  edges {
-                    node {
-                      id
-                      name
-                      serviceInstances {
-                        edges {
-                          node {
+              }
+              services {
+                edges {
+                  node {
+                    id
+                    name
+                    serviceInstances {
+                      edges {
+                        node {
+                          id
+                          environmentId
+                          latestDeployment {
                             id
-                            environmentId
-                            latestDeployment {
-                              id
-                              status
-                              createdAt
-                              meta
-                            }
+                            status
+                            createdAt
+                            meta
                           }
                         }
                       }

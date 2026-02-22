@@ -195,7 +195,11 @@ export function ServiceTable() {
 
       {!isLoading && !error && filtered.length === 0 && (
         <div className="rounded-lg border p-8 text-center text-muted-foreground">
-          No services match your filters.
+          {data && data.length === 0 ? (
+            <p>No services found. Add projects to your Railway workspaces.</p>
+          ) : (
+            <p>No services match your filters. Try clearing the search or changing the filter.</p>
+          )}
         </div>
       )}
 
