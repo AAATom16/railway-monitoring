@@ -2,6 +2,7 @@
 
 import { useState, useMemo, Fragment } from "react";
 import { useOverview } from "@/hooks/use-overview";
+import { usePinnedProjects } from "@/hooks/use-pinned-projects";
 import { StatusBadge } from "@/components/status-badge";
 import {
   Table,
@@ -23,8 +24,13 @@ import {
   ChevronDown,
   ChevronRight,
   RefreshCw,
+  Star,
+  LayoutGrid,
+  List,
 } from "lucide-react";
 import { LogsDrawer } from "@/components/logs-drawer";
+
+type ViewMode = "table" | "cards";
 
 type FilterStatus = "all" | "failing" | "deploying" | "healthy";
 
@@ -66,11 +72,13 @@ export function ServiceTable() {
   const [onlyProd, setOnlyProd] = useState(false);
   const [autoRefresh, setAutoRefresh] = useState(true);
   const [refreshInterval, setRefreshInterval] = useState(30);
+  const [viewMode, setViewMode] = useState<ViewMode>("table");
   const [expandedProjects, setExpandedProjects] = useState<Set<string>>(
     () => new Set()
   );
   const [logsService, setLogsService] = useState<ServiceRowType | null>(null);
 
+  const { pinned, togglePin, isPinned } = usePinnedProjects();
   const { data, isLoading, error, refetch, isFetching } = useOverview({
     refetchInterval: autoRefresh ? refreshInterval * 1000 : false,
   });
@@ -105,6 +113,18 @@ export function ServiceTable() {
   }, [data, filter, onlyProd, search]);
 
   const grouped = useMemo(() => groupByProject(filtered), [filtered]);
+
+  const sortedGroupedEntries = useMemo(() => {
+    const entries = Array.from(grouped.entries());
+    if (pinned.size === 0) return entries;
+    return entries.sort(([a], [b]) => {
+      const aPinned = pinned.has(a);
+      const bPinned = pinned.has(b);
+      if (aPinned && !bPinned) return -1;
+      if (!aPinned && bPinned) return 1;
+      return 0;
+    });
+  }, [grouped, pinned]);
 
   const toggleProject = (projectId: string) => {
     setExpandedProjects((prev) => {
@@ -169,6 +189,26 @@ export function ServiceTable() {
             <option value={60}>60s</option>
           </select>
         )}
+        <div className="flex items-center gap-1 border rounded-md p-0.5">
+          <Button
+            variant={viewMode === "table" ? "secondary" : "ghost"}
+            size="sm"
+            className="h-8 px-2"
+            onClick={() => setViewMode("table")}
+            title="Table view"
+          >
+            <List className="h-4 w-4" />
+          </Button>
+          <Button
+            variant={viewMode === "cards" ? "secondary" : "ghost"}
+            size="sm"
+            className="h-8 px-2"
+            onClick={() => setViewMode("cards")}
+            title="Card view"
+          >
+            <LayoutGrid className="h-4 w-4" />
+          </Button>
+        </div>
         <Button
           variant="outline"
           size="icon"
@@ -203,11 +243,12 @@ export function ServiceTable() {
         </div>
       )}
 
-      {!isLoading && !error && filtered.length > 0 && (
+      {!isLoading && !error && filtered.length > 0 && viewMode === "table" && (
         <div className="rounded-lg border">
           <Table>
             <TableHeader>
               <TableRow>
+                <TableHead className="w-8" />
                 <TableHead className="w-8" />
                 <TableHead>Project</TableHead>
                 <TableHead>Service</TableHead>
@@ -218,7 +259,7 @@ export function ServiceTable() {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {Array.from(grouped.entries()).map(([projectId, rows]) => {
+              {sortedGroupedEntries.map(([projectId, rows]) => {
                 const projectName = rows[0]?.projectName ?? "—";
                 const isExpanded =
                   expandedProjects.has(projectId) || grouped.size === 1;
@@ -236,6 +277,21 @@ export function ServiceTable() {
                         ) : (
                           <ChevronRight className="h-4 w-4" />
                         )}
+                      </TableCell>
+                      <TableCell
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          togglePin(projectId);
+                        }}
+                      >
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          className={`h-8 w-8 ${isPinned(projectId) ? "text-amber-500 fill-amber-500" : "text-muted-foreground"}`}
+                          title={isPinned(projectId) ? "Unpin project" : "Pin project to top"}
+                        >
+                          <Star className="h-4 w-4" />
+                        </Button>
                       </TableCell>
                       <TableCell colSpan={2}>
                         <span className="font-medium">{projectName}</span>
@@ -255,6 +311,7 @@ export function ServiceTable() {
                           className="bg-background"
                           onClick={(e) => e.stopPropagation()}
                         >
+                          <TableCell />
                           <TableCell />
                           <TableCell className="text-muted-foreground">
                             {row.projectName}
@@ -302,6 +359,68 @@ export function ServiceTable() {
               })}
             </TableBody>
           </Table>
+        </div>
+      )}
+
+      {!isLoading && !error && filtered.length > 0 && viewMode === "cards" && (
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+          {sortedGroupedEntries.map(([projectId, rows]) => {
+            const projectName = rows[0]?.projectName ?? "—";
+            const railwayUrl = rows[0]?.railwayUrl;
+            return (
+              <div
+                key={projectId}
+                className="rounded-lg border bg-card p-4 shadow-sm transition-colors hover:bg-muted/30"
+              >
+                <div className="flex items-start justify-between gap-2 mb-3">
+                  <div className="flex items-center gap-2 min-w-0">
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className={`h-8 w-8 shrink-0 ${isPinned(projectId) ? "text-amber-500 fill-amber-500" : "text-muted-foreground"}`}
+                      title={isPinned(projectId) ? "Unpin" : "Pin to top"}
+                      onClick={() => togglePin(projectId)}
+                    >
+                      <Star className="h-4 w-4" />
+                    </Button>
+                    <h3 className="font-semibold truncate">{projectName}</h3>
+                  </div>
+                  {railwayUrl && (
+                    <Button variant="ghost" size="icon" className="h-8 w-8 shrink-0" asChild>
+                      <a href={railwayUrl} target="_blank" rel="noopener noreferrer" title="Open in Railway">
+                        <ExternalLink className="h-4 w-4" />
+                      </a>
+                    </Button>
+                  )}
+                </div>
+                <ul className="space-y-2">
+                  {rows.map((row) => (
+                    <li
+                      key={`${row.serviceId}-${row.environmentId}`}
+                      className="flex items-center justify-between gap-2 rounded-md bg-muted/50 px-3 py-2"
+                    >
+                      <div className="min-w-0 flex-1">
+                        <span className="font-medium text-sm block truncate">{row.serviceName}</span>
+                        <span className="text-xs text-muted-foreground">{row.environmentName}</span>
+                      </div>
+                      <div className="flex items-center gap-2 shrink-0">
+                        <StatusBadge health={row.health} />
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          className="h-8 w-8"
+                          title="View logs"
+                          onClick={() => setLogsService(row)}
+                        >
+                          <FileText className="h-4 w-4" />
+                        </Button>
+                      </div>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            );
+          })}
         </div>
       )}
 

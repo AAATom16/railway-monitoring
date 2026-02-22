@@ -4,12 +4,16 @@ Dashboard to monitor all your Railway services across projects. One screen, all 
 
 ![Railway Monitoring](https://img.shields.io/badge/Railway-0B0D0E?style=flat&logo=railway&logoColor=white)
 
-## What you get
+## Features
 
-- **Single overview** — All projects, all services, all environments in one table
-- **Status at a glance** — Running, deploying, failed (with filters)
-- **Logs on demand** — Click a service, see logs in a side panel (static or live stream)
+- **Single overview** — All projects, all services, all environments in one place
+- **Pin projects** — Star projects to keep them at the top (persisted in localStorage)
+- **Table or cards** — Switch between table view and card view
+- **Status at a glance** — Running, deploying, failed (with filters: All, Failing, Deploying, Healthy)
+- **Search & filters** — Filter by project/service name, production only
+- **Logs on demand** — Click a service, see logs in a side panel (static or live SSE stream)
 - **Railway login** — Sign in with your Railway account, no extra credentials
+- **Auto-refresh** — Configurable refresh interval (15s, 30s, 60s)
 
 ## Quick Start (local)
 
@@ -34,8 +38,8 @@ You need a Railway OAuth app to let users sign in.
 
 1. Go to **Workspace Settings** → **Developer** → **New OAuth App** (OAuth apps are workspace-scoped)
 2. Create a new app (type: Web / Confidential)
-3. Add redirect URI:  
-   - Local: `http://localhost:3000/api/auth/callback`  
+3. Add redirect URI:
+   - Local: `http://localhost:3000/api/auth/callback`
    - Production: `https://your-domain.com/api/auth/callback`
 4. Copy Client ID and Client Secret
 5. In `.env`:
