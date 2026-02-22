@@ -18,8 +18,10 @@ export function middleware(request: NextRequest) {
     return NextResponse.redirect(new URL("/login", request.url));
   }
 
-  if (hasSession && isLoginPage) {
-    return NextResponse.redirect(new URL("/", request.url));
+  // Allow /login always – users with stale/expired session can reach it to re-auth.
+  // (With valid session they can still visit /login; they’ll just see the form.)
+  if (isLoginPage) {
+    return NextResponse.next();
   }
 
   return NextResponse.next();
