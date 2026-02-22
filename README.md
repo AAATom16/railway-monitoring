@@ -2,7 +2,10 @@
 
 Dashboard to monitor all your Railway services across projects. One screen, all statuses, one click to logs.
 
-![Railway Monitoring](https://img.shields.io/badge/Railway-0B0D0E?style=flat&logo=railway&logoColor=white)
+[![Railway](https://img.shields.io/badge/Railway-0B0D0E?style=flat&logo=railway&logoColor=white)](https://railway.app)
+[![Live Demo](https://img.shields.io/badge/demo-live-success)](https://railway-monitoring-production.up.railway.app)
+
+> **Live demo:** [railway-monitoring-production.up.railway.app](https://railway-monitoring-production.up.railway.app) — Sign in with your Railway account to see the dashboard.
 
 ## Features
 
@@ -93,3 +96,7 @@ docker run -p 3000:3000 --env-file .env railway-monitoring
 ## License
 
 MIT
+
+---
+
+**Repo setup tip:** Add topics `railway`, `monitoring`, `nextjs`, `dashboard` in GitHub repo Settings → About.
