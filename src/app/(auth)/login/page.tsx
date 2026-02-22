@@ -14,9 +14,10 @@ export default async function LoginPage({
           Sign in with your Railway account to view all your services
         </p>
         {params.error && (
-          <p className="text-destructive text-sm mb-4">
-            Login failed. Please try again.
-          </p>
+          <div className="text-destructive text-sm mb-4 space-y-1">
+            <p>Login failed: <code className="bg-muted px-1 rounded">{params.error}</code></p>
+            <p className="text-muted-foreground text-xs">Check server logs for [OAuth] debug output.</p>
+          </div>
         )}
         <Button asChild>
           <a href="/api/auth/login">Sign in with Railway</a>

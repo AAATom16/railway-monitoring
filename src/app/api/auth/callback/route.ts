@@ -10,8 +10,18 @@ export async function GET(request: NextRequest) {
   const code = searchParams.get("code");
   const state = searchParams.get("state");
   const error = searchParams.get("error");
+  const errorDescription = searchParams.get("error_description");
+
+  console.log("[OAuth Callback]", {
+    hasCode: !!code,
+    hasState: !!state,
+    error: error ?? null,
+    errorDescription: errorDescription ?? null,
+    redirectUri: request.url.split("?")[0],
+  });
 
   if (error) {
+    console.error("[OAuth Callback] Railway returned error:", error, errorDescription);
     return NextResponse.redirect(
       new URL(`/login?error=${encodeURIComponent(error)}`, request.url)
     );
@@ -62,7 +72,14 @@ export async function GET(request: NextRequest) {
   });
 
   if (!tokenResponse.ok) {
-    console.error("Token exchange failed:", tokenResponse.status);
+    const errorBody = await tokenResponse.text();
+    console.error("[OAuth Token Exchange] Failed:", {
+      status: tokenResponse.status,
+      statusText: tokenResponse.statusText,
+      body: errorBody,
+      redirectUri,
+      hasCodeVerifier: !!codeVerifier,
+    });
     return NextResponse.redirect(
       new URL("/login?error=token_exchange", request.url)
     );

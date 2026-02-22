@@ -74,7 +74,16 @@ Otevřete [http://localhost:3000](http://localhost:3000).
 - Cookie `oauth_state` mohla expirovat nebo chybět (např. blokování cookies)
 - Zkuste v prohlížeči vymazat cookies pro localhost a přihlásit se znovu
 
-## 6. Railway OAuth dokumentace
+## 6. Debug logy
+
+Aplikace loguje OAuth flow s prefixem `[OAuth]`:
+
+- **Lokálně**: výstup v terminálu kde běží `npm run dev`
+- **Produkce**: `railway logs --lines 100` nebo `railway logs -f "OAuth"` pro živý stream
+
+Na login stránce se při chybě zobrazí kód (invalid_client, invalid_redirect_uri, token_exchange, …).
+
+## 7. Railway OAuth dokumentace
 
 - [Creating an OAuth App](https://docs.railway.com/reference/oauth/creating-an-app)
 - [OAuth Troubleshooting](https://docs.railway.com/reference/oauth/troubleshooting)

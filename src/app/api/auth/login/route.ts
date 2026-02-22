@@ -19,6 +19,13 @@ export async function GET() {
   const state = randomBytes(32).toString("hex");
   const { codeVerifier, codeChallenge } = generatePKCE();
 
+  console.log("[OAuth Login]", {
+    baseUrl,
+    redirectUri,
+    clientIdPrefix: clientId?.slice(0, 12) + "...",
+    hasCodeChallenge: !!codeChallenge,
+  });
+
   const params = new URLSearchParams({
     response_type: "code",
     client_id: clientId,
