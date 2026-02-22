@@ -32,8 +32,8 @@ Open [http://localhost:3000](http://localhost:3000) and log in with Railway.
 
 You need a Railway OAuth app to let users sign in.
 
-1. Go to [railway.app/account](https://railway.app/account) → **Developer** → **OAuth Apps**
-2. Create a new app (type: Web Application)
+1. Go to **Workspace Settings** → **Developer** → **New OAuth App** (OAuth apps are workspace-scoped)
+2. Create a new app (type: Web / Confidential)
 3. Add redirect URI:  
    - Local: `http://localhost:3000/api/auth/callback`  
    - Production: `https://your-domain.com/api/auth/callback`
@@ -77,6 +77,7 @@ docker run -p 3000:3000 --env-file .env railway-monitoring
 ## Docs
 
 - [OAuth setup](docs/SETUP_RAILWAY_OAUTH.md)
+- [Local testing & troubleshooting](docs/LOCAL_TESTING.md)
 - [Deploy on Railway](docs/DEPLOY_RAILWAY.md)
 - [GitHub + Railway](docs/GITHUB_RAILWAY_SETUP.md)
 - [Security](SECURITY.md)

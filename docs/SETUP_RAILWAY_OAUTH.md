@@ -6,7 +6,7 @@ To use Railway Monitoring, you need to create a Railway OAuth application.
 
 1. **Log in to Railway** — [https://railway.app](https://railway.app)
 
-2. **Go to Account → Tokens** — [https://railway.app/account/tokens](https://railway.app/account/tokens)
+2. **Go to Workspace Settings → Developer** — OAuth apps are workspace-scoped. In your Railway dashboard, select a workspace, then **Settings** → **Developer** → **New OAuth App**.
 
 3. **Create an OAuth Application**
    - Click "Create OAuth Application" (or similar)

@@ -41,6 +41,16 @@ export async function GET(request: NextRequest) {
   }
 
   const redirectUri = `${baseUrl}/api/auth/callback`;
+  const codeVerifier = request.cookies.get("oauth_code_verifier")?.value;
+
+  const tokenParams: Record<string, string> = {
+    grant_type: "authorization_code",
+    code,
+    redirect_uri: redirectUri,
+  };
+  if (codeVerifier) {
+    tokenParams.code_verifier = codeVerifier;
+  }
 
   const tokenResponse = await fetch(RAILWAY_TOKEN_URL, {
     method: "POST",
@@ -48,11 +58,7 @@ export async function GET(request: NextRequest) {
       "Content-Type": "application/x-www-form-urlencoded",
       Authorization: `Basic ${Buffer.from(`${clientId}:${clientSecret}`).toString("base64")}`,
     },
-    body: new URLSearchParams({
-      grant_type: "authorization_code",
-      code,
-      redirect_uri: redirectUri,
-    }).toString(),
+    body: new URLSearchParams(tokenParams).toString(),
   });
 
   if (!tokenResponse.ok) {
@@ -74,6 +80,7 @@ export async function GET(request: NextRequest) {
 
   const response = NextResponse.redirect(new URL("/", baseUrl));
   response.cookies.set("oauth_state", "", { maxAge: 0, path: "/" });
+  response.cookies.set("oauth_code_verifier", "", { maxAge: 0, path: "/" });
 
   return response;
 }
